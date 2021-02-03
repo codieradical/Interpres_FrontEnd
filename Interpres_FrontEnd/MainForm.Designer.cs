@@ -50,6 +50,8 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importJSONMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +85,7 @@
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.commandInputBox = new System.Windows.Forms.TextBox();
             this.commandExecuteButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.menuStrip1.SuspendLayout();
@@ -113,6 +115,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.dataMenuItem,
             this.viewToolStripMenuItem,
             this.helpToolStripMenuItem,
             this.aboutButton,
@@ -297,6 +300,21 @@
             this.findAndReplaceToolStripMenuItem.ToolTipText = "Find and replace text.";
             this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.FindAndReplaceToolStripMenuItem_Click);
             // 
+            // dataMenuItem
+            // 
+            this.dataMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importJSONMenuItem});
+            this.dataMenuItem.Name = "dataMenuItem";
+            this.dataMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.dataMenuItem.Text = "Data";
+            // 
+            // importJSONMenuItem
+            // 
+            this.importJSONMenuItem.Name = "importJSONMenuItem";
+            this.importJSONMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.importJSONMenuItem.Text = "Import JSON";
+            this.importJSONMenuItem.Click += new System.EventHandler(this.importJSONMenuItem_Click);
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -347,6 +365,7 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.ToolTipText = "Opens the help documents.";
+            this.helpToolStripMenuItem.Visible = false;
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
@@ -394,7 +413,7 @@
             this.lineNumbersBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lineNumbersBox.Dock = System.Windows.Forms.DockStyle.Left;
             this.lineNumbersBox.Enabled = false;
-            this.lineNumbersBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lineNumbersBox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lineNumbersBox.Location = new System.Drawing.Point(4, 3);
             this.lineNumbersBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.lineNumbersBox.Name = "lineNumbersBox";
@@ -485,8 +504,8 @@
             // 
             this.filePathLabel.Name = "filePathLabel";
             this.filePathLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.filePathLabel.Size = new System.Drawing.Size(44, 17);
-            this.filePathLabel.Text = "No File";
+            this.filePathLabel.Size = new System.Drawing.Size(84, 17);
+            this.filePathLabel.Text = "No file loaded.";
             // 
             // tableLayoutPanel1
             // 
@@ -535,6 +554,7 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(137, 300);
             this.listBox1.TabIndex = 0;
+            this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 
             // splitContainer2
             // 
@@ -597,7 +617,7 @@
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.textBox1);
+            this.splitContainer3.Panel1.Controls.Add(this.commandInputBox);
             // 
             // splitContainer3.Panel2
             // 
@@ -606,15 +626,16 @@
             this.splitContainer3.SplitterDistance = 790;
             this.splitContainer3.TabIndex = 3;
             // 
-            // textBox1
+            // commandInputBox
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(790, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
+            this.commandInputBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.commandInputBox.Enabled = false;
+            this.commandInputBox.Location = new System.Drawing.Point(0, 0);
+            this.commandInputBox.Name = "commandInputBox";
+            this.commandInputBox.Size = new System.Drawing.Size(790, 23);
+            this.commandInputBox.TabIndex = 1;
+            this.commandInputBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.commandInputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
             // commandExecuteButton
             // 
@@ -652,7 +673,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainForm";
-            this.Text = "Text Editor";
+            this.Text = "Interpres";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -737,9 +758,11 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox commandInputBox;
         private System.Windows.Forms.Button commandExecuteButton;
         private System.Windows.Forms.ToolStripMenuItem runScriptMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dataMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importJSONMenuItem;
     }
 }
 
