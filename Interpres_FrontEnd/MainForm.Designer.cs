@@ -52,6 +52,7 @@
             this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importJSONMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importCSVMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -303,7 +304,8 @@
             // dataMenuItem
             // 
             this.dataMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importJSONMenuItem});
+            this.importJSONMenuItem,
+            this.importCSVMenuItem});
             this.dataMenuItem.Name = "dataMenuItem";
             this.dataMenuItem.Size = new System.Drawing.Size(43, 20);
             this.dataMenuItem.Text = "Data";
@@ -314,6 +316,13 @@
             this.importJSONMenuItem.Size = new System.Drawing.Size(141, 22);
             this.importJSONMenuItem.Text = "Import JSON";
             this.importJSONMenuItem.Click += new System.EventHandler(this.importJSONMenuItem_Click);
+            // 
+            // importCSVMenuItem
+            // 
+            this.importCSVMenuItem.Name = "importCSVMenuItem";
+            this.importCSVMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.importCSVMenuItem.Text = "Import CSV";
+            this.importCSVMenuItem.Click += new System.EventHandler(this.importCSVMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -555,6 +564,7 @@
             this.variableListBox.Size = new System.Drawing.Size(137, 300);
             this.variableListBox.TabIndex = 0;
             this.variableListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.variableListBox_KeyDown);
+            this.variableListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.variableListBox_MouseDoubleClick);
             // 
             // splitContainer2
             // 
@@ -763,6 +773,7 @@
         private System.Windows.Forms.ToolStripMenuItem runScriptMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dataMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importJSONMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importCSVMenuItem;
     }
 }
 

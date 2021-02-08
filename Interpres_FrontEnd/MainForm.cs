@@ -15,6 +15,8 @@ using Interpreter;
 using System.Threading;
 using Interpreter.Tokenizers;
 using Interpres_FrontEnd.Commands;
+using Interpreter.Extensions;
+using Interpres_FrontEnd;
 
 namespace Interpres
 {
@@ -410,6 +412,46 @@ namespace Interpres
             {
                 FocusedWorkspace.variables.Remove(variableListBox.SelectedItem.ToString().Split(':')[0]);
                 UpdateVariableList();
+            }
+        }
+
+        private void importCSVMenuItem_Click(object sender, EventArgs e)
+        {
+            CSVDataImporter csvDataImporter = new CSVDataImporter();
+            foreach (KeyValuePair<string, object> pair in csvDataImporter.ImportData())
+            {
+                FocusedWorkspace.variables[pair.Key] = pair.Value;
+            }
+            UpdateVariableList();
+        }
+
+        private void variableListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            string name = variableListBox.SelectedItem.ToString().Split(':')[0];
+            if (FocusedWorkspace.variables.ContainsKey(name))
+            {
+                object variable = FocusedWorkspace.variables[name];
+                if(variable.IsArray() && ((object[])variable)[0].IsArray())
+                {
+                    object[] rows = (object[])variable;
+                    foreach (object col in rows)
+                    {
+                        if (col.IsArray())
+                        {
+                            foreach (object val in (object[])col)
+                            {
+                                if (val.IsArray())
+                                    return;
+                            }
+                        }
+                        else
+                            return;
+                    }
+                    ViewMatrixForm viewMatrix = new ViewMatrixForm((object[][])variable, name);
+                    viewMatrix.ShowDialog();
+
+                    FocusedWorkspace.variables[name] = viewMatrix.GetValue();
+                }
             }
         }
     }
