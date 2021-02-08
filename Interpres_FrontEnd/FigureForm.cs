@@ -12,34 +12,44 @@ namespace Interpres_FrontEnd
 {
     public partial class FigureForm : Form
     {
-        public FigureForm()
+        private readonly double[] values;
+        public FigureForm(double[] values)
         {
+            this.values = values;
             InitializeComponent();
             graph();
         }
 
         //your function based on x,y
-        public double getValue(int x, int y)
-        {
-            return (-0.6 + 5 * x - 0.5 * x * 2 + 0.0312 * x * 3);
-        }
+        //public double getValue(int x, int y)
+        //{
+        //    if (x >= 0 && x < values.Length)
+        //    return values[x];
+        //}
 
         //setting the values to the function
         public FunctionSeries GetFunction()
         {
-            int n = 100;
+            //int n = 100;
             FunctionSeries serie = new FunctionSeries();
-            for (int x = 0; x < 35; x++)
-            {
-                for (int y = 0; y < 1400; y++)
-                {
-                    //adding the points based x,y
-                    DataPoint data = new DataPoint(x, getValue(x, y));
 
-                    //adding the point to the serie
-                    serie.Points.Add(data);
-                }
+            for (int x = 0; x < values.Length; x++)
+            {
+                DataPoint data = new DataPoint(x, values[x]);
+                serie.Points.Add(data);
             }
+
+            //for (int x = 0; x < 35; x++)
+            //{
+            //    for (int y = 0; y < 1400; y++)
+            //    {
+            //        //adding the points based x,y
+            //        DataPoint data = new DataPoint(x, getValue(x, y));
+
+            //        //adding the point to the serie
+            //        serie.Points.Add(data);
+            //    }
+            //}
             //returning the serie
             return serie;
         }
@@ -47,16 +57,16 @@ namespace Interpres_FrontEnd
         //setting all the parameters of the model
         public void graph()
         {
-            PlotModel model = new PlotModel { Title = "example" };
+            PlotModel model = new PlotModel { Title = "MatPlot" };
             model.LegendPosition = LegendPosition.RightBottom;
             model.LegendPlacement = LegendPlacement.Outside;
             model.LegendOrientation = LegendOrientation.Horizontal;
 
             model.Series.Add(GetFunction());
             var Yaxis = new OxyPlot.Axes.LinearAxis();
-            OxyPlot.Axes.LinearAxis XAxis = new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, Minimum = 0, Maximum = 100 };
-            XAxis.Title = "X";
-            Yaxis.Title = "10 * x * x + 11 * x*y*y  + 12*x*y";
+            OxyPlot.Axes.LinearAxis XAxis = new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, Minimum = 0, Maximum = values.Length - 1 };
+            //XAxis.Title = "X";
+            //Yaxis.Title = "10 * x * x + 11 * x*y*y  + 12*x*y";
             model.Axes.Add(Yaxis);
             model.Axes.Add(XAxis);
             this.plotView1.Model = model;
@@ -93,11 +103,11 @@ namespace Interpres_FrontEnd
         //    //MyChart.SaveImage(@"C:\users\peter\documents\poly.jpg", Charting.ChartImageFormat.Jpeg);
         //}
 
-        double Poly(double x)
-        {
-            double y = 1.0;
-            for (double c = 1.0; c < 10.0; c += 1.0) y = y * (x - c);
-            return y;
-        }
+        //double Poly(double x)
+        //{
+        //    double y = 1.0;
+        //    for (double c = 1.0; c < 10.0; c += 1.0) y = y * (x - c);
+        //    return y;
+        //}
     }
 }

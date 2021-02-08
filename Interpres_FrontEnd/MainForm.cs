@@ -33,7 +33,7 @@ namespace Interpres
         }
 
         public LocalFileWorkspace FocusedWorkspace { 
-            get { return this.tabControl1.SelectedIndex >= 0 ? openWorkspaces.ElementAt(this.tabControl1.SelectedIndex) : null; }  
+            get { return this.workspaceTabs.SelectedIndex >= 0 ? openWorkspaces.ElementAt(this.workspaceTabs.SelectedIndex) : null; }  
             set
             {
                 textEditorBox.Enabled = value != null;
@@ -47,14 +47,13 @@ namespace Interpres
                 commandInputBox.Enabled = value != null;
                 commandExecuteButton.Enabled = value != null;
 
-                tabControl1.SelectedIndex = openWorkspaces.IndexOf(value);
+                workspaceTabs.SelectedIndex = openWorkspaces.IndexOf(value);
                 TextBoxLines = value != null ? value.script : new string[0];
                 commandInputBox.Text = value != null ? value.command : "";
 
                 UpdateVariableList();
                 UpdateScrollback();
                 filePathLabel.Text = value != null? value.Path : "No file loaded.";
-                //listBox1.Items.AddRange(value.variables);
             }
         }
 
@@ -72,7 +71,7 @@ namespace Interpres
 
         public void UpdateVariableList()
         {
-            listBox1.Items.Clear();
+            variableListBox.Items.Clear();
             if (FocusedWorkspace != null)
             {
                 foreach (KeyValuePair<string, object> variablePair in FocusedWorkspace.variables)
@@ -84,16 +83,16 @@ namespace Interpres
                         valueString = ArrayToString((object[])variablePair.Value);
                     }
 
-                    listBox1.Items.Add(variablePair.Key + ": " + valueString);
+                    variableListBox.Items.Add(variablePair.Key + ": " + valueString);
                 }
             }
         }
 
         public void UpdateScrollback()
         {
-            richTextBox1.Text = "";
+            scrollbackTextBox.Text = "";
             if (FocusedWorkspace != null)
-                richTextBox1.AppendText(string.Join("\r\n", FocusedWorkspace.commandLog));
+                scrollbackTextBox.AppendText(string.Join("\r\n", FocusedWorkspace.commandLog));
         }
 
         //A property to access textEditorBox.Lines publically.
@@ -117,7 +116,7 @@ namespace Interpres
             try
             {
                 openWorkspaces.Add(new LocalFileService().OpenWorkspace() as LocalFileWorkspace);
-                tabControl1.TabPages.Add(Path.GetFileName(openWorkspaces.Last().Path));
+                workspaceTabs.TabPages.Add(Path.GetFileName(openWorkspaces.Last().Path));
                 FocusedWorkspace = openWorkspaces.Last();
             } catch (IOException ex)
             {
@@ -138,7 +137,7 @@ namespace Interpres
         private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int focusedIndex = openWorkspaces.IndexOf(FocusedWorkspace);
-            tabControl1.TabPages.RemoveAt(focusedIndex);
+            workspaceTabs.TabPages.RemoveAt(focusedIndex);
             openWorkspaces.RemoveAt(focusedIndex);
             FocusedWorkspace = openWorkspaces.Count > 0 ? openWorkspaces.ElementAt(Math.Max(focusedIndex - 1, 0)) : null;
 
@@ -148,7 +147,7 @@ namespace Interpres
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openWorkspaces.Add(new LocalFileWorkspace(null, new string[0]));
-            tabControl1.TabPages.Add("New File");
+            workspaceTabs.TabPages.Add("New File");
             FocusedWorkspace = openWorkspaces.Last();
         }
 
@@ -303,10 +302,10 @@ namespace Interpres
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex < 0 || tabControl1.SelectedIndex > openWorkspaces.Count - 1)
+            if (workspaceTabs.SelectedIndex < 0 || workspaceTabs.SelectedIndex > openWorkspaces.Count - 1)
                 return;
 
-            FocusedWorkspace = openWorkspaces.ElementAt(tabControl1.SelectedIndex);
+            FocusedWorkspace = openWorkspaces.ElementAt(workspaceTabs.SelectedIndex);
         }
 
         private void ExecuteCommand(string input)
@@ -316,14 +315,17 @@ namespace Interpres
 
         private void ExecuteCommand(Workspace workspace, string input)
         {
+            if (input.EndsWith(";"))
+                input = input.Substring(0, input.Length - 1);
+
             try
             {
                 CommandTokenizer commandTokenizer = new CommandTokenizer();
-                commandTokenizer.RegisterCommand(new PlotCommand());
+                commandTokenizer.RegisterCommand(new MatrixPlotCommand());
                 TokenizerService tokenizerService = new TokenizerService(commandTokenizer);
                 var tokens = tokenizerService.GetTokens(input);
                 workspace.commandLog.AddLast(">> " + input);
-                object answer = new AbstractSyntaxTree(tokens.Select(token => (object)token).ToList(), workspace).GetValue();
+                object answer = new AbstractSyntaxTree(tokens.Select(token => (object)token).ToList(), workspace)?.GetValue();
                 if (answer == null)
                     answer = "";
                 string answerString = answer.ToString();
@@ -339,7 +341,7 @@ namespace Interpres
             UpdateVariableList();
         }
 
-        public void ClearScrollback()
+        private void ClearScrollback()
         {
             FocusedWorkspace.commandLog = new LinkedList<string>();
             UpdateScrollback();
@@ -365,7 +367,7 @@ namespace Interpres
                 scriptText = scriptText.Substring(0, scriptText.Length - 1);
 
             focused.loading = true;
-
+                
             //Thread scriptThread = new Thread(new ThreadStart(() =>
             //{
                 foreach (string command in scriptText.Split(";"))
@@ -386,7 +388,7 @@ namespace Interpres
             commandInputBox.Text = "";
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void commandInputBox_TextChanged(object sender, EventArgs e)
         {
             FocusedWorkspace.command = commandInputBox.Text;
         }
@@ -401,11 +403,11 @@ namespace Interpres
             UpdateVariableList();
         }
 
-        private void listBox1_KeyDown(object sender, KeyEventArgs e)
+        private void variableListBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
-                FocusedWorkspace.variables.Remove(listBox1.SelectedItem.ToString().Split(':')[0]);
+                FocusedWorkspace.variables.Remove(variableListBox.SelectedItem.ToString().Split(':')[0]);
                 UpdateVariableList();
             }
         }

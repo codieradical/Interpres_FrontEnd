@@ -10,7 +10,7 @@ namespace Interpres_FrontEnd.Commands
     {
         public override object Execute(object[] args, Workspace workspace)
         {
-            new FigureForm().Show();
+            //new FigureForm().Show();
             throw new NotImplementedException();
         }
 

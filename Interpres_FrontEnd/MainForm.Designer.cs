@@ -80,14 +80,14 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.variableListBox = new System.Windows.Forms.ListBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.scrollbackTextBox = new System.Windows.Forms.RichTextBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.commandInputBox = new System.Windows.Forms.TextBox();
             this.commandExecuteButton = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.workspaceTabs = new System.Windows.Forms.TabControl();
             this.menuStrip1.SuspendLayout();
             this.textStatusStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -539,22 +539,22 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Window;
-            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.variableListBox);
             this.splitContainer1.Size = new System.Drawing.Size(840, 300);
             this.splitContainer1.SplitterDistance = 699;
             this.splitContainer1.TabIndex = 6;
             // 
-            // listBox1
+            // variableListBox
             // 
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(0, 0);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(137, 300);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
+            this.variableListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.variableListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.variableListBox.FormattingEnabled = true;
+            this.variableListBox.ItemHeight = 15;
+            this.variableListBox.Location = new System.Drawing.Point(0, 0);
+            this.variableListBox.Name = "variableListBox";
+            this.variableListBox.Size = new System.Drawing.Size(137, 300);
+            this.variableListBox.TabIndex = 0;
+            this.variableListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.variableListBox_KeyDown);
             // 
             // splitContainer2
             // 
@@ -587,7 +587,7 @@
             // 
             // splitContainer4.Panel1
             // 
-            this.splitContainer4.Panel1.Controls.Add(this.richTextBox1);
+            this.splitContainer4.Panel1.Controls.Add(this.scrollbackTextBox);
             // 
             // splitContainer4.Panel2
             // 
@@ -596,16 +596,16 @@
             this.splitContainer4.SplitterDistance = 72;
             this.splitContainer4.TabIndex = 4;
             // 
-            // richTextBox1
+            // scrollbackTextBox
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(840, 72);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.scrollbackTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scrollbackTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.scrollbackTextBox.Location = new System.Drawing.Point(0, 0);
+            this.scrollbackTextBox.Name = "scrollbackTextBox";
+            this.scrollbackTextBox.ReadOnly = true;
+            this.scrollbackTextBox.Size = new System.Drawing.Size(840, 72);
+            this.scrollbackTextBox.TabIndex = 0;
+            this.scrollbackTextBox.Text = "";
             // 
             // splitContainer3
             // 
@@ -634,7 +634,7 @@
             this.commandInputBox.Name = "commandInputBox";
             this.commandInputBox.Size = new System.Drawing.Size(790, 23);
             this.commandInputBox.TabIndex = 1;
-            this.commandInputBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.commandInputBox.TextChanged += new System.EventHandler(this.commandInputBox_TextChanged);
             this.commandInputBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
             // commandExecuteButton
@@ -649,15 +649,15 @@
             this.commandExecuteButton.UseVisualStyleBackColor = true;
             this.commandExecuteButton.Click += new System.EventHandler(this.commandExecuteButton_Click);
             // 
-            // tabControl1
+            // workspaceTabs
             // 
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl1.Location = new System.Drawing.Point(0, 24);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(840, 22);
-            this.tabControl1.TabIndex = 8;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            this.workspaceTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.workspaceTabs.Location = new System.Drawing.Point(0, 24);
+            this.workspaceTabs.Name = "workspaceTabs";
+            this.workspaceTabs.SelectedIndex = 0;
+            this.workspaceTabs.Size = new System.Drawing.Size(840, 22);
+            this.workspaceTabs.TabIndex = 8;
+            this.workspaceTabs.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // MainForm
             // 
@@ -665,7 +665,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(840, 473);
             this.Controls.Add(this.splitContainer2);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.workspaceTabs);
             this.Controls.Add(this.textStatusStrip);
             this.Controls.Add(this.menuStrip1);
             this.HelpButton = true;
@@ -752,10 +752,10 @@
         private System.Windows.Forms.ToolStripStatusLabel filePathLabel;
         private System.Windows.Forms.ToolStripMenuItem aboutButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox variableListBox;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.RichTextBox scrollbackTextBox;
+        private System.Windows.Forms.TabControl workspaceTabs;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.TextBox commandInputBox;
