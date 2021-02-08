@@ -22,6 +22,16 @@ namespace Interpres
     {
         private List<LocalFileWorkspace> openWorkspaces = new List<LocalFileWorkspace>();
 
+        public static MainForm singleton;
+
+        public MainForm() : base()
+        {
+            singleton = this;
+
+            InitializeComponent();
+            UpdateOptions();
+        }
+
         public LocalFileWorkspace FocusedWorkspace { 
             get { return this.tabControl1.SelectedIndex >= 0 ? openWorkspaces.ElementAt(this.tabControl1.SelectedIndex) : null; }  
             set
@@ -88,12 +98,6 @@ namespace Interpres
 
         //A property to access textEditorBox.Lines publically.
         public string[] TextBoxLines { get { return this.textEditorBox.Lines; } set {this.textEditorBox.Lines = value; } }
-
-        public MainForm()
-        {
-            InitializeComponent();
-            UpdateOptions();
-        }
 
         private void UpdateOptions()
         {
@@ -333,6 +337,12 @@ namespace Interpres
             }
             UpdateScrollback();
             UpdateVariableList();
+        }
+
+        public void ClearScrollback()
+        {
+            FocusedWorkspace.commandLog = new LinkedList<string>();
+            UpdateScrollback();
         }
 
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
