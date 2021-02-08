@@ -320,6 +320,7 @@ namespace Interpres
             {
                 CommandTokenizer commandTokenizer = new CommandTokenizer();
                 commandTokenizer.RegisterCommand(new PlotCommand());
+                commandTokenizer.RegisterCommand(new ClrCommand());
                 TokenizerService tokenizerService = new TokenizerService(commandTokenizer);
                 var tokens = tokenizerService.GetTokens(input);
                 workspace.commandLog.AddLast(">> " + input);

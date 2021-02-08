@@ -13,7 +13,10 @@
 
   <ItemGroup>
     <Reference Include="Interpreter">
-      <HintPath>..\..\Interpres_Interpreter\Interpreter\bin\Debug\Interpreter.dll</HintPath>
+      <HintPath>..\..\..\Documents\Year 5 - UEA - Advanced Computing\ap_georgi\Interpres_Interpreter\bin\Debug\Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\Documents\Year 5 - UEA - Advanced Computing\ap_georgi\Interpres_Interpreter\bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 
