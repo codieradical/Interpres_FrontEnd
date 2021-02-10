@@ -17,18 +17,23 @@ using Interpreter.Tokenizers;
 using Interpres_FrontEnd.Commands;
 using Interpreter.Extensions;
 using Interpres_FrontEnd;
+using Interpres;
 
-namespace Interpres
+namespace Interpres_FrontEnd
 {
     public partial class MainForm : Form
     {
         private List<LocalFileWorkspace> openWorkspaces = new List<LocalFileWorkspace>();
 
         public static MainForm singleton;
+        bool updateFlag = false;
 
-        public MainForm() : base()
+        public readonly IExecutor executor;
+
+        public MainForm(IExecutor executor) : base()
         {
             singleton = this;
+            this.executor = executor;
 
             InitializeComponent();
             UpdateOptions();
@@ -36,7 +41,7 @@ namespace Interpres
 
         public LocalFileWorkspace FocusedWorkspace { 
             get { return this.workspaceTabs.SelectedIndex >= 0 ? openWorkspaces.ElementAt(this.workspaceTabs.SelectedIndex) : null; }  
-            set
+            private set
             {
                 textEditorBox.Enabled = value != null;
                 fontToolStripMenuItem.Enabled = value != null;
@@ -76,16 +81,23 @@ namespace Interpres
             variableListBox.Items.Clear();
             if (FocusedWorkspace != null)
             {
-                foreach (KeyValuePair<string, object> variablePair in FocusedWorkspace.variables)
+                try
                 {
-                    string valueString = variablePair.Value.ToString();
-
-                    if (variablePair.Value.GetType().IsArray)
+                    foreach (KeyValuePair<string, object> variablePair in FocusedWorkspace.variables)
                     {
-                        valueString = ArrayToString((object[])variablePair.Value);
-                    }
+                        string valueString = variablePair.Value.ToString();
 
-                    variableListBox.Items.Add(variablePair.Key + ": " + valueString);
+                        if (variablePair.Value.GetType().IsArray)
+                        {
+                            valueString = ArrayToString((object[])variablePair.Value);
+                        }
+
+                        variableListBox.Items.Add(variablePair.Key + ": " + valueString);
+                    }
+                }
+                catch
+                {
+
                 }
             }
         }
@@ -310,7 +322,7 @@ namespace Interpres
             FocusedWorkspace = openWorkspaces.ElementAt(workspaceTabs.SelectedIndex);
         }
 
-        private void ExecuteCommand(string input)
+        public void ExecuteCommand(string input)
         {
             ExecuteCommand(FocusedWorkspace, input);
         }
@@ -322,13 +334,8 @@ namespace Interpres
 
             try
             {
-                CommandTokenizer commandTokenizer = new CommandTokenizer();
-                commandTokenizer.RegisterCommand(new MatrixPlotCommand());
-                commandTokenizer.RegisterCommand(new ClrCommand());
-                TokenizerService tokenizerService = new TokenizerService(commandTokenizer);
-                var tokens = tokenizerService.GetTokens(input);
                 workspace.commandLog.AddLast(">> " + input);
-                object answer = new AbstractSyntaxTree(tokens.Select(token => (object)token).ToList(), workspace)?.GetValue();
+                object answer = executor.Execute(workspace, input);
                 if (answer == null)
                     answer = "";
                 string answerString = answer.ToString();
@@ -340,8 +347,15 @@ namespace Interpres
             {
                 workspace.commandLog.AddLast("err: " + ex.Message);
             }
-            UpdateScrollback();
-            UpdateVariableList();
+
+            try
+            {
+                UpdateScrollback();
+                UpdateVariableList();
+            } catch
+            {
+
+            }
         }
 
         private void ClearScrollback()
@@ -370,16 +384,17 @@ namespace Interpres
                 scriptText = scriptText.Substring(0, scriptText.Length - 1);
 
             focused.loading = true;
-                
-            //Thread scriptThread = new Thread(new ThreadStart(() =>
-            //{
+
+            Thread scriptThread = new Thread(new ThreadStart(() =>
+            {
                 foreach (string command in scriptText.Split(";"))
                 {
                     ExecuteCommand(focused, command);
+                    updateFlag = true;
                 }
-            //}));
+            }));
 
-            //scriptThread.Start();
+            scriptThread.Start();
 
             focused.loading = false;
         }
@@ -431,27 +446,69 @@ namespace Interpres
             if (FocusedWorkspace.variables.ContainsKey(name))
             {
                 object variable = FocusedWorkspace.variables[name];
-                if(variable.IsArray() && ((object[])variable)[0].IsArray())
+                if (variable.IsArray())
                 {
-                    object[] rows = (object[])variable;
-                    foreach (object col in rows)
+                    if (((object[])variable)[0].IsArray())
                     {
-                        if (col.IsArray())
+                        object[] rows = (object[])variable;
+                        foreach (object col in rows)
                         {
-                            foreach (object val in (object[])col)
+                            if (col.IsArray())
                             {
-                                if (val.IsArray())
-                                    return;
+                                foreach (object val in (object[])col)
+                                {
+                                    if (val.IsArray())
+                                        return;
+                                }
                             }
+                            else
+                                return;
                         }
-                        else
-                            return;
-                    }
-                    ViewMatrixForm viewMatrix = new ViewMatrixForm((object[][])variable, name);
-                    viewMatrix.ShowDialog();
+                        try
+                        {
+                            ViewMatrixForm viewMatrix = new ViewMatrixForm((object[][])variable, name);
+                            viewMatrix.ShowDialog();
+                            FocusedWorkspace.variables[name] = viewMatrix.GetValue2D();
+                            UpdateVariableList();
+                        }
+                        catch
+                        {
 
-                    FocusedWorkspace.variables[name] = viewMatrix.GetValue();
+                        }
+                    }
+                    else
+                    {
+                        foreach (object element in (object[])variable)
+                        {
+                            if (!element.IsNumeric() && !element.IsBoolean() && !element.IsString() && !element.IsFloat())
+                                return;
+                        }
+
+                        ViewMatrixForm viewMatrix = new ViewMatrixForm((object[])variable, name);
+                        viewMatrix.ShowDialog();
+                        FocusedWorkspace.variables[name] = viewMatrix.GetValue1D();
+                        UpdateVariableList();
+                    }
                 }
+                else
+                {
+                    if (variable.IsBoolean() || variable.IsString() || variable.IsCharacter() || variable.IsNumeric() || variable.IsFloat())
+                    {
+                        ViewVariableForm viewVariableForm = new ViewVariableForm(variable);
+                        viewVariableForm.ShowDialog();
+                        FocusedWorkspace.variables[name] = viewVariableForm.GetValue();
+                        UpdateVariableList();
+                    }
+                }
+            }
+        }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            if (updateFlag)
+            {
+                FocusedWorkspace = FocusedWorkspace;
+                updateFlag = false;
             }
         }
     }
