@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.16.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Interpres_FrontEnd\Interpres_FrontEnd.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interpreter">
+      <HintPath>..\..\Interpres_Interpreter\Interpreter\Interpreter\bin\Debug\Interpreter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -13,7 +13,13 @@ namespace Interpres_FrontEnd.Commands
             try
             {
                 workspace.commandLog = new LinkedList<string>();
-                Interpres.MainForm.singleton.UpdateScrollback();
+                try
+                {
+                    MainForm.singleton.UpdateScrollback();
+                } catch
+                {
+
+                }
                 Console.Clear();
                 return "Success";
             }

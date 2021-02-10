@@ -23,6 +23,7 @@ namespace Interpres_FrontEnd.Commands
                         throw new ArgumentException("Cannot plot a non numeric value.");
                 }
                 new FigureForm(plotVals).Show();
+                return true;
             }
             throw new ArgumentException("Argument is non numeric.");
         }

@@ -10,10 +10,8 @@ namespace Interpres_FrontEnd
 {
     public partial class ViewMatrixForm : Form
     {
-        private readonly object[][] matrix;
         public ViewMatrixForm(object[][] matrix, string name)
         {
-            this.matrix = matrix;
             this.Text = "View Matrix: " + name;
 
             InitializeComponent();
@@ -37,7 +35,38 @@ namespace Interpres_FrontEnd
             }
         }
 
-        public object[][] GetValue()
+        public ViewMatrixForm(object[] matrix, string name)
+        {
+            this.Text = "View Matrix: " + name;
+
+            InitializeComponent();
+
+            int width = matrix.GetLength(0);
+
+            this.dataGridView1.ColumnCount = width;
+            DataGridViewRow row = new DataGridViewRow();
+            row.CreateCells(this.dataGridView1);
+
+            for (int r = 0; r < width; r++)
+            {
+                row.Cells[r].Value = matrix[r];
+            }
+
+            this.dataGridView1.Rows.Add(row);
+        }
+
+        public object[] GetValue1D()
+        {
+            object[] col = new object[dataGridView1.Rows[0].Cells.Count];
+            foreach (DataGridViewCell j in dataGridView1.Rows[0].Cells)
+            {
+                col[j.ColumnIndex] = j.Value;
+            }
+
+            return col;
+        }
+
+        public object[][] GetValue2D()
         {
             object[][] rows = new object[dataGridView1.RowCount - 1][];
             foreach (DataGridViewRow i in dataGridView1.Rows)

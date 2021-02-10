@@ -1,4 +1,4 @@
-﻿namespace Interpres
+﻿namespace Interpres_FrontEnd
 {
     partial class MainForm
     {
@@ -685,6 +685,7 @@
             this.Name = "MainForm";
             this.Text = "Interpres";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.textStatusStrip.ResumeLayout(false);
